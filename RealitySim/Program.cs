@@ -1,10 +1,12 @@
-﻿using System;
+﻿using RealitySim;
+using System;
 
 namespace MyProject;
 class Program
 {   
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        Console.WriteLine("Startup text goes here!");
+        Game game = new Game();
     }
 }

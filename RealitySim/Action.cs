@@ -9,22 +9,24 @@ namespace RealitySim
 {
     internal class Action
     {
+        public ACTION Id { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
         public LOCATION[] ValidLocations { get; private set; }
-        bool RequiresTarget;
-        bool RequiresWitnesses;
+        public bool RequiresTarget { get; private set; }
+        public int EnergyCost { get; set; }
 
-        public Action(string actionName, string actionDesc, LOCATION[] validLocations)
-            : this(actionName, actionDesc, validLocations, false, false) { }
+        public Action(ACTION Id, string actionName, string actionDesc, LOCATION[] validLocations)
+            : this(Id, actionName, actionDesc, validLocations, false, 1) { }
 
-        public Action(string actionName, string actionDesc, LOCATION[] validLocations, bool requiresTarget, bool requiresWitnesses)
+        public Action(ACTION id, string actionName, string actionDesc, LOCATION[] validLocations, bool requiresTarget, int energyCost)
         {
+            this.Id = id;
             this.Name = actionName;
             this.Description = actionDesc;
             this.ValidLocations = validLocations;
             this.RequiresTarget = requiresTarget;
-            this.RequiresWitnesses = requiresWitnesses;
+            this.EnergyCost = energyCost;
         }
     }
 }
