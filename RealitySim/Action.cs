@@ -14,7 +14,7 @@ namespace RealitySim
         public string Description { get; private set; }
         public LOCATION[] ValidLocations { get; private set; }
         public bool RequiresTarget { get; private set; }
-        public int EnergyCost { get; set; }
+        public int EnergyCost { get; private set; }
 
         public Action(ACTION Id, string actionName, string actionDesc, LOCATION[] validLocations)
             : this(Id, actionName, actionDesc, validLocations, false, 1) { }

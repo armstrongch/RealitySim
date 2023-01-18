@@ -10,18 +10,28 @@ namespace RealitySim
 {
     internal partial class Game
     {
-
-        private void InitializeHousemates()
+        private void InitializeHousemates(int numPlayers)
         {
-            List<string> names = new List<string>()
+            List<(string, string)> names = new List<(string,string)>()
             {
-                "Joe", "Kevin", "Matt", "Sam", "Thad", "Turd"
+                ("Joe", "Desc"),
+                ("Kevin", "Desc"),
+                ("Matt", "Desc"),
+                ("Sam", "Desc"),
+                ("Thad", "Desc"),
+                ("Turd", "Desc")
             };
+
             names = names.OrderBy(n => rand.Next()).ToList();
+
 
             for (int i = 0; i < names.Count; i++)
             {
-                Housemates.Add(new Housemate(names[i], LOCATION.HOUSE));
+                if (i < numPlayers)
+                {
+                    Console.WriteLine($"Player {(i+1).ToString()} is {names[i].Item1}: {names[i].Item2}.");
+                }
+                Housemates.Add(new Housemate(names[i].Item1, LOCATION.HOUSE));
             }
         }
 
@@ -51,28 +61,5 @@ namespace RealitySim
                 new Action(ACTION.TATTLE, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4),
             };
         }
-
-        private void PerformAction(Action action, Housemate housemate, Housemate? target, LOCATION location)
-        {
-            housemate.Energy -= action.EnergyCost;
-
-            switch(action.Id)
-            {
-                case ACTION.WORK_A_SHIFT:
-                    housemate.Cash += 100;
-                    Console.WriteLine($"{housemate.Name} works a shift at the bagel shop.");
-                    break;
-                case ACTION.GO_TO_BED:
-                    housemate.Awake = false;
-                    housemate.Energy = HousemateMaxEnergy;
-                    Console.WriteLine($"{housemate.Name} goes to sleep.");
-                    break;
-                default:
-                    throw new NotImplementedException();
-                    break;
-            }
-        }
-
-
     }
 }

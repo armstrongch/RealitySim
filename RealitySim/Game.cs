@@ -14,9 +14,9 @@ namespace RealitySim
         List<Housemate> Housemates = new List<Housemate>();
         Random rand = new Random();
         
-        public Game()
+        public Game(int numPlayers)
         {
-            InitializeHousemates();
+            InitializeHousemates(numPlayers);
             InitializeActions();
 
             bool everyoneIsAsleep = false;
@@ -35,7 +35,14 @@ namespace RealitySim
                         .Where(a => a.EnergyCost <= housemate.Energy)
                         .ToList();
                     
-                    housemate.TakeAction(availableActions);
+                    Action selectedAction = housemate.SelectAction(availableActions);
+                    Housemate? selectedTarget = null;
+                    if (selectedAction.RequiresTarget)
+                    {
+                        selectedTarget = housemate.SelectTarget(selectedAction);
+                    }
+
+                    PerformAction(selectedAction, housemate, selectedTarget, housemate.currentLocation);
                 }
                 
                 //Day is over once everyone is asleep

@@ -17,6 +17,7 @@ namespace RealitySim
         public int Karma { get; private set; } = 0;
         public int Cash { get; set; } = 500;
         public bool Awake { get; set; } = true;
+        public List<ACTION> ActionHistory { get; private set; }
 
         public int Energy { get; set; } = HousemateMaxEnergy;
 
@@ -26,7 +27,12 @@ namespace RealitySim
             this.currentLocation = currentLocation;
         }
 
-        public void TakeAction(List<Action> availableActions)
+        public Action SelectAction(List<Action> availableActions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Housemate SelectTarget(Action action)
         {
             throw new NotImplementedException();
         }
