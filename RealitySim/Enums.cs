@@ -26,5 +26,14 @@ namespace RealitySim
             TATTLE
         }
 
+        public enum RELATIONSHIP
+        {
+            NEUTRAL,
+            FRIENDS,
+            ENEMIES,
+            DATING,
+            ONE_LIKES_TWO,
+            TWO_LIKES_ONE
+        }
     }
 }

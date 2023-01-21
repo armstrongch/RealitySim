@@ -13,6 +13,9 @@ namespace RealitySim
         List<Action> Actions = new List<Action>();
         List<Housemate> Housemates = new List<Housemate>();
         Random rand = new Random();
+        int currentDayNum = 1;
+        List<(Housemate, Housemate)> Relationships = new List<(Housemate, Housemate)>();
+        List<WitnessedEvent> WitnessedEvents = new List<WitnessedEvent>();
         
         public Game(int numPlayers)
         {
@@ -48,6 +51,7 @@ namespace RealitySim
                 //Day is over once everyone is asleep
                 everyoneIsAsleep = !Housemates.Where(h => h.Awake).Any();
             }
+            currentDayNum += 1;
             throw new NotImplementedException();
         }
     }

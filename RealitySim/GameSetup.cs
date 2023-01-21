@@ -14,12 +14,12 @@ namespace RealitySim
         {
             List<(string, string)> names = new List<(string,string)>()
             {
-                ("Joe", "Desc"),
-                ("Kevin", "Desc"),
-                ("Matt", "Desc"),
-                ("Sam", "Desc"),
-                ("Thad", "Desc"),
-                ("Turd", "Desc")
+                ("Joe", "My name is Joe!"),
+                ("Kevin", "My name is Kevin!"),
+                ("Matt", "My name is Matt!"),
+                ("Sam", "My name is Sam!"),
+                ("Thad", "My name is Thad!"),
+                ("Turd", "My name is Turd!")
             };
 
             names = names.OrderBy(n => rand.Next()).ToList();
@@ -29,7 +29,7 @@ namespace RealitySim
             {
                 if (i < numPlayers)
                 {
-                    Console.WriteLine($"Player {(i+1).ToString()} is {names[i].Item1}: {names[i].Item2}.");
+                    Console.WriteLine($"Player {(i+1).ToString()} is {names[i].Item1}: \"{names[i].Item2}\"");
                 }
                 Housemates.Add(new Housemate(names[i].Item1, LOCATION.HOUSE));
             }
@@ -56,9 +56,9 @@ namespace RealitySim
 
                 new Action(ACTION.PUNCH, "Punch", "Start a fistfight with a housemate.", club_or_work, true, 8),
                 new Action(ACTION.FLIRT, "Flirt", "Make a romantic pass at a housemate.", all, true, 4),
-                new Action(ACTION.ENTER_A_RELATIONSHIP, "Enter a Relationship", "Become exclusive partners with a housemate.", all, true, 4),
-                new Action(ACTION.BREAK_UP, "Break Up", "End your current relationship.", all, false, 8),
-                new Action(ACTION.TATTLE, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4),
+                //new Action(ACTION.ENTER_A_RELATIONSHIP, "Enter a Relationship", "Become exclusive partners with a housemate.", all, true, 4),
+                //new Action(ACTION.BREAK_UP, "Break Up", "End your current relationship.", all, false, 8),
+                //new Action(ACTION.TATTLE, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4),
             };
         }
     }
