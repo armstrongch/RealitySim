@@ -26,6 +26,7 @@ namespace RealitySim
             List<Housemate> witnesses = Housemates
                 .Where(h => h.currentLocation == housemate.currentLocation)
                 .Where(h => h.Name != housemate.Name && h.Name != targetName)
+                .Where(h => h.Awake)
                 .ToList();
 
             switch (action.Id)
@@ -148,7 +149,7 @@ namespace RealitySim
         private void WitnessAction(Housemate housemate, Housemate target, Housemate witness, Housemate? victim, int positiveChangeAmount, ACTION actionId)
         {
             string printString = $"{witness.Name} is nearby. ";
-            bool witnessLikesTarget = witness.GetOpinion(target) > 0;
+            bool witnessLikesTarget = witness.HasPositiveOpinionOf(target);
             if (witnessLikesTarget)
             {
                 printString += $"He already dislikes {target.Name}, so his opinion of {housemate.Name} improves.";

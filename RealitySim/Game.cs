@@ -16,7 +16,9 @@ namespace RealitySim
         int currentDayNum = 1;
         List<(Housemate, Housemate)> Relationships = new List<(Housemate, Housemate)>();
         List<WitnessedEvent> WitnessedEvents = new List<WitnessedEvent>();
-        
+        const string stars = "*******************************************************";
+
+
         public Game(int numPlayers)
         {
             InitializeHousemates(numPlayers);
@@ -25,8 +27,13 @@ namespace RealitySim
             bool everyoneIsAsleep = false;
             while (!everyoneIsAsleep)
             {
-                foreach(Housemate housemate in Housemates)
+                foreach(Housemate housemate in Housemates.Where(h => h.Awake).ToList())
                 {
+                    Console.WriteLine(stars);
+                    Console.WriteLine($"It is {housemate.Name}'s turn!");
+
+                    housemate.ShowInfo(BuildRelationshipMatrix(housemate));
+                    
                     bool alone = Housemates.Where(h => h.currentLocation == housemate.currentLocation).Count() > 0;
                     
                     List<Action> availableActions = Actions

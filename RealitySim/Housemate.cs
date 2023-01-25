@@ -34,23 +34,50 @@ namespace RealitySim
             Opinions[housemate] += value;
         }
 
-        public int GetOpinion(Housemate housemate)
+        public bool HasPositiveOpinionOf(Housemate housemate)
         {
             IncrementOpinion(housemate, 0);
-            return Opinions[housemate];
+            return Opinions[housemate] >= 0;
         }
 
-        public void ShowInfo()
+        public void ShowInfo(List<(Housemate, RELATIONSHIP)> rels)
         {
             List<string> housemateInfo = new List<string>();
             housemateInfo.Add($"Name: {Name}");
             housemateInfo.Add($"Cash: ${Cash.ToString()}.00");
             housemateInfo.Add($"Energy: {Energy.ToString()} / {HousemateMaxEnergy.ToString()}");
             housemateInfo.Add($"Current Location: {currentLocation.ToString()}");
-            
+
+            string noone = "No One";
+
             string like = (Karma > 0) ? "like" : "dislike";
             housemateInfo.Add($"Viewers {like} {Name}. (Karma = {Karma.ToString()})");
 
+            string Friends = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.FRIEND).Select(r => r.Item1.Name).ToList());
+            if (Friends == string.Empty) { Friends = noone; }
+            
+            string Enemies = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.ENEMY).Select(r => r.Item1.Name).ToList());
+            if (Enemies == string.Empty) { Enemies = noone; }
+            
+            string Likes = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.LIKE_AND_DISLIKED_BY).Select(r => r.Item1.Name).ToList());
+            if (Likes == string.Empty) { Likes = noone; }
+
+            string Dislike = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.DISLIKE_AND_LIKED_BY).Select(r => r.Item1.Name).ToList());
+            if (Dislike == string.Empty) { Dislike = noone; }
+
+            Housemate? SignficantOher = rels.Where(r => r.Item2 == RELATIONSHIP.DATING).FirstOrDefault().Item1;
+            string SOName = SignficantOher == null ? noone : SignficantOher.Name;
+
+            housemateInfo.Add($"Significant Other: {SOName}");
+            housemateInfo.Add($"Friends: {Friends}");
+            housemateInfo.Add($"Enemies: {Enemies}");
+            housemateInfo.Add($"Likes: {Likes}");
+            housemateInfo.Add($"Dislikes: {Dislike}");
+
+            foreach(string s in housemateInfo)
+            {
+                Console.WriteLine(s);
+            }
         }
         
         public Action SelectAction(List<Action> availableActions)
@@ -61,6 +88,11 @@ namespace RealitySim
         public Housemate SelectTarget(Action action)
         {
             throw new NotImplementedException();
+        }
+
+        private void BuildRelationshipMatrix()
+        {
+
         }
     }
 }

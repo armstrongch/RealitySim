@@ -28,12 +28,11 @@ namespace RealitySim
 
         public enum RELATIONSHIP
         {
-            NEUTRAL,
-            FRIENDS,
-            ENEMIES,
-            DATING,
-            ONE_LIKES_TWO,
-            TWO_LIKES_ONE
+            FRIEND,
+            ENEMY,
+            LIKE_AND_DISLIKED_BY,
+            DISLIKE_AND_LIKED_BY,
+            DATING
         }
     }
 }
