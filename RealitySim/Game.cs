@@ -32,7 +32,12 @@ namespace RealitySim
                     Console.WriteLine(stars);
                     Console.WriteLine($"It is {housemate.Name}'s turn!");
 
-                    housemate.ShowInfo(BuildRelationshipMatrix(housemate));
+                    List<Housemate> nearbyHousemates = Housemates
+                        .Where(h => h.currentLocation == housemate.currentLocation)
+                        .Where(h => h != housemate)
+                        .ToList();
+
+                    housemate.ShowInfo(BuildRelationshipMatrix(housemate), nearbyHousemates);
                     
                     bool alone = Housemates.Where(h => h.currentLocation == housemate.currentLocation).Count() > 0;
                     

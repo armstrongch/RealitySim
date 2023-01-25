@@ -29,11 +29,14 @@ namespace RealitySim
 
             for (int i = 0; i < names.Count; i++)
             {
+                int? playerNum = null;
                 if (i < numPlayers)
                 {
-                    Console.WriteLine($"Player {(i+1).ToString()} is {names[i].Item1}: \"{names[i].Item2}\"");
+                    Console.WriteLine($"Player {(i + 1).ToString()} is {names[i].Item1}: \"{names[i].Item2}\"");
+                    playerNum = i + 1;
                 }
-                Housemates.Add(new Housemate(names[i].Item1, LOCATION.HOUSE));
+                Housemates.Add(new Housemate(names[i].Item1, LOCATION.HOUSE, playerNum));
+                
             }
         }
 
