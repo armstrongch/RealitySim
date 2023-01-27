@@ -35,7 +35,7 @@ namespace RealitySim
                     Console.WriteLine($"{housemate.Name} works a shift at the bagel shop.");
                     if (threeDayTotal >= 3)
                     {
-                        Console.WriteLine($"{housemate.Name} has worked ${threeDayTotal.ToString()} shifts in the last 3 days. Viewers are starting to lose interest.");
+                        Console.WriteLine($"{housemate.Name} has worked {threeDayTotal.ToString()} shifts in the last 3 days. Viewers are starting to lose interest.");
                         housemate.Karma -= 1;
                     }
                     break;
@@ -58,7 +58,7 @@ namespace RealitySim
                     Console.WriteLine($"{housemate.Name} decides to head home.");
                     break;
                 case ACTION.PUNCH:
-                    Console.WriteLine($"{housemate.Name} starts a fistfight with ${targetName}.");
+                    Console.WriteLine($"{housemate.Name} starts a fistfight with {targetName}.");
                     // Viewers like or dislike you depending on whether they like or dislike your target
                     IncrementKarma(housemate, target, false, 3);
                     // Target dislikes you 
@@ -70,7 +70,7 @@ namespace RealitySim
                     }
                     break;
                 case ACTION.FLIRT:
-                    Console.WriteLine($"{housemate.Name} flirts with ${targetName}.");
+                    Console.WriteLine($"{housemate.Name} flirts with {targetName}.");
                     // Target likes you
                     target.IncrementOpinion(housemate, 2);
 
@@ -133,14 +133,14 @@ namespace RealitySim
                 printString += $"{target.Name} is a fan favorite, ";
             }
 
-            if (targetHasPositiveKarma != positiveRelationship)
+            if (targetHasPositiveKarma == positiveRelationship)
             {
-                printString += $"so ${housemate.Name}'s reputation with audiences declines.";
+                printString += $"so {housemate.Name}'s reputation with audiences declines.";
                 housemate.Karma -= Math.Abs(target.Karma);
             }
             else
             {
-                printString += $"so ${housemate.Name}'s reputation improves.";
+                printString += $"so {housemate.Name}'s reputation with audiences improves.";
                 housemate.Karma += Math.Abs(target.Karma);
             }
             Console.WriteLine(printString);

@@ -55,7 +55,7 @@ namespace RealitySim
         {
             List<string> housemateInfo = new List<string>();
             housemateInfo.Add($"Name: {Name}");
-            housemateInfo.Add($"Cash: ${Cash.ToString()}.00");
+            housemateInfo.Add($"Cash: {Cash.ToString()}.00");
             housemateInfo.Add($"Energy: {Energy.ToString()} / {HousemateMaxEnergy.ToString()}");
             housemateInfo.Add($"Current Location: {currentLocation.ToString()}");
             housemateInfo.Add($"Nearby Housemates: {string.Join(", ", nearbyHousemates.Select(h => h.Name).ToList())}");

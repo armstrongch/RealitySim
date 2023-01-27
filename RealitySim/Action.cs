@@ -30,7 +30,7 @@ namespace RealitySim
             this.RequiresTarget = requiresTarget;
             this.EnergyCost = energyCost;
 
-            if (requiresTarget ^ targetType == CPU_TARGET_TYPE.NONE)
+            if (requiresTarget ^ targetType != CPU_TARGET_TYPE.NONE)
             {
                 throw new Exception("Only non-targeted actions have target type of NONE.");
             }
