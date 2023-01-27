@@ -19,7 +19,6 @@ namespace RealitySim
         List<WitnessedEvent> WitnessedEvents = new List<WitnessedEvent>();
         const string stars = "*******************************************************";
 
-
         public Game(int numPlayers)
         {
             InitializeHousemates(numPlayers);
@@ -38,10 +37,13 @@ namespace RealitySim
                         .Where(h => h != housemate)
                         .ToList();
 
-                    housemate.ShowInfo(BuildRelationshipMatrix(housemate), nearbyHousemates);
-                    
-                    bool alone = Housemates.Where(h => h.currentLocation == housemate.currentLocation).Count() == 0;
-                    
+                    if (housemate.PlayerNum is not null)
+                    {
+                        housemate.ShowInfo(BuildRelationshipMatrix(housemate), nearbyHousemates);
+                    }
+
+                    bool alone = nearbyHousemates.Count == 0;
+
                     List<Action> availableActions = Actions
                         //Valid Location
                         .Where(a => a.ValidLocations.Contains(housemate.currentLocation))

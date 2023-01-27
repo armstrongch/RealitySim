@@ -66,7 +66,7 @@ namespace RealitySim
                     // Nearby housemates like or dislike you depending on whether they like or dislike your target
                     foreach (Housemate witness in witnesses)
                     {
-                        WitnessAction(housemate, target, witness, null, 1, action.Id); 
+                        ReactToInteraction(housemate, target, witness, false, 1, ACTION.PUNCH);
                     }
                     break;
                 case ACTION.FLIRT:
@@ -83,19 +83,58 @@ namespace RealitySim
                         if (witnesses.Contains(SO))
                         {
                             Console.WriteLine($"{SO.Name} is nearby.");
-                            Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
-                            SO.Energy += breakup.EnergyCost;
-                            PerformAction(breakup, SO, null, housemate.currentLocation);
+                            //Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
+                            //SO.Energy += breakup.EnergyCost;
+                            //PerformAction(breakup, SO, null, housemate.currentLocation);
+                            throw new NotImplementedException("What should happen when your SO sees you cheating?");
                         }
                         else
                         {
                             foreach(Housemate witness in witnesses)
                             {
                                 // Otherwise, this will impact other witnesses opinion of you, and they may tattle on you in the future.
-                                WitnessAction(housemate, target, witness, SO, 1, ACTION.FLIRT);
+                                ReactToInteraction(housemate, SO, witness, false, 1, ACTION.FLIRT);
+                                WitnessAction(housemate, target, witness, SO, ACTION.FLIRT);
                             }
                         }
                     }
+                    break;
+                case ACTION.ENTER_A_RELATIONSHIP:
+                    Console.WriteLine($"{housemate.Name} wants to make it official with {targetName}.");
+
+                    Housemate? targetSO = GetSignificantOther(target);
+                    bool targetIsSingle = targetSO == null;
+                    
+                    if (!targetIsSingle)
+                    {
+                        Console.WriteLine($"{targetName} is currently dating {targetSO.Name}.");
+                        bool targetLikesSO = target.HasPositiveOpinionOf(targetSO);
+                        if (targetLikesSO)
+                        {
+                            Console.WriteLine($"This erodes {targetSO.Name}'s opinion of {housemate.Name}");
+                            targetSO.IncrementOpinion(housemate, -3);
+                            targetIsSingle = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{targetName} is dissatisfied with his relationship.");
+                            Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
+                            target.Energy += breakup.EnergyCost;
+                            PerformAction(breakup, target, null, housemate.currentLocation);
+                        }
+                    }
+
+                    if (targetIsSingle && target.HasPositiveOpinionOf(housemate))
+                    {
+                        Console.WriteLine($"{targetName} is into {housemate.Name} too, and they enter into a relationship.");
+                        Relationships.Add((housemate, target));
+                        IncrementKarma(housemate, target, true, 1);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{targetName} rejects {housemate.Name}");
+                    }
+
                     break;
                 default:
                     throw new NotImplementedException();
@@ -126,14 +165,14 @@ namespace RealitySim
             
             if (targetHasPositiveKarma)
             {
-                printString += $"Viewers already dislike {target.Name}, ";
+                printString += $"{target.Name} is a fan favorite, "; 
             }
             else
             {
-                printString += $"{target.Name} is a fan favorite, ";
+                printString += $"Viewers already dislike {target.Name}, ";
             }
 
-            if (targetHasPositiveKarma == positiveRelationship)
+            if (targetHasPositiveKarma != positiveRelationship)
             {
                 printString += $"so {housemate.Name}'s reputation with audiences declines.";
                 housemate.Karma -= Math.Abs(target.Karma);
@@ -146,26 +185,38 @@ namespace RealitySim
             Console.WriteLine(printString);
         }
 
-        private void WitnessAction(Housemate housemate, Housemate target, Housemate witness, Housemate? victim, int positiveChangeAmount, ACTION actionId)
+        private void WitnessAction(Housemate housemate, Housemate target, Housemate witness, Housemate victim, ACTION actionId)
+        {
+            Console.WriteLine($"{witness.Name} will remember this.");
+            WitnessedEvents.Add(new WitnessedEvent(witness, housemate, victim, target, actionId));
+        }
+
+        private void ReactToInteraction(Housemate housemate, Housemate target, Housemate witness, bool positiveAction, int positiveChangeAmount, ACTION actionId)
         {
             string printString = $"{witness.Name} is nearby. ";
             bool witnessLikesTarget = witness.HasPositiveOpinionOf(target);
             if (witnessLikesTarget)
             {
-                printString += $"He already dislikes {target.Name}, so his opinion of {housemate.Name} improves.";
-                witness.IncrementOpinion(housemate, positiveChangeAmount);
+                printString += $"He already dislikes {target.Name}, ";
+                
             }
             else
             {
-                printString += $"He has no beef with {target.Name}, so his opinion of {housemate.Name} declines.";
+                printString += $"He has no beef with {target.Name}, ";
+                
+            }
+
+            if (witnessLikesTarget ^ positiveAction)
+            {
+                printString += $"so his opinion of {housemate.Name} declines.";
                 witness.IncrementOpinion(housemate, positiveChangeAmount * -1);
             }
-            Console.WriteLine(printString);
-            
-            if (victim != null)
+            else
             {
-                WitnessedEvents.Add(new WitnessedEvent(witness, housemate, victim, target, actionId));
+                printString += $"so his opinion of {housemate.Name} improves.";
+                witness.IncrementOpinion(housemate, positiveChangeAmount);
             }
+            Console.WriteLine(printString);
         }
 
         private string[] GetNames(List<Housemate> housemates)
