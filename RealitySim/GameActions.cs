@@ -26,7 +26,6 @@ namespace RealitySim
             List<Housemate> witnesses = Housemates
                 .Where(h => h.currentLocation == housemate.currentLocation)
                 .Where(h => h.Name != housemate.Name && h.Name != targetName)
-                .Where(h => h.Awake)
                 .ToList();
 
             switch (action.Id)
@@ -42,6 +41,7 @@ namespace RealitySim
                     break;
                 case ACTION.GO_TO_BED:
                     housemate.Awake = false;
+                    housemate.currentLocation = LOCATION.DREAMLAND;
                     housemate.Energy = HousemateMaxEnergy;
                     Console.WriteLine($"{housemate.Name} goes to sleep.");
                     break;

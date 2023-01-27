@@ -52,18 +52,18 @@ namespace RealitySim
 
             Actions = new List<Action>()
             {
-                new Action(ACTION.WORK_A_SHIFT, "Work a Shift.", "Earn $100.", work, false, 20),
-                new Action(ACTION.GO_TO_BED, "Go to Bed", "End your day.", house, false, 0),
+                new Action(ACTION.WORK_A_SHIFT, "Work a Shift.", "Earn $100.", work, false, 20, CPU_TARGET_TYPE.NONE),
+                new Action(ACTION.GO_TO_BED, "Go to Bed", "End your day.", house, false, 0, CPU_TARGET_TYPE.NONE),
 
                 new Action(ACTION.GO_TO_WORK, "Go to Work.", "Walk to the bagel shop.", club_or_house),
                 new Action(ACTION.GO_TO_THE_CLUB, "Go to the Club", "Take a taxi to the nightclub.", work_or_house),
                 new Action(ACTION.GO_HOME, "Go Home", "Head back to the house.", club_or_work),
 
-                new Action(ACTION.PUNCH, "Punch", "Start a fistfight with a housemate.", club_or_work, true, 8),
-                new Action(ACTION.FLIRT, "Flirt", "Make a romantic pass at a housemate.", all, true, 4),
-                //new Action(ACTION.ENTER_A_RELATIONSHIP, "Enter a Relationship", "Become exclusive partners with a housemate.", all, true, 4),
-                //new Action(ACTION.BREAK_UP, "Break Up", "End your current relationship.", all, false, 8),
-                //new Action(ACTION.TATTLE, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4),
+                new Action(ACTION.PUNCH, "Punch", "Start a fistfight with a housemate.", club_or_work, true, 8, CPU_TARGET_TYPE.WORST_ENEMY),
+                new Action(ACTION.FLIRT, "Flirt", "Make a romantic pass at a housemate.", all, true, 4, CPU_TARGET_TYPE.RANDOM_FRIENDLY),
+                //new Action(ACTION.ENTER_A_RELATIONSHIP, "Enter a Relationship", "Become exclusive partners with a housemate.", all, true, 4, CPU_TARGET_TYPE.BEST_FRIEND),
+                //new Action(ACTION.BREAK_UP, "Break Up", "End your current relationship.", all, false, 8, CPU_TARGET_TYPE.NONE),
+                //new Action(ACTION.TATTLE, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4, CPU_TARGET_TYPE.WORST_ENEMY_WITH_DIRT),
             };
         }
     }

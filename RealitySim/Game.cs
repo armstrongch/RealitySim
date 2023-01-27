@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using static RealitySim.Enums;
+using static RealitySim.Input;
 
 namespace RealitySim
 {
@@ -39,7 +40,7 @@ namespace RealitySim
 
                     housemate.ShowInfo(BuildRelationshipMatrix(housemate), nearbyHousemates);
                     
-                    bool alone = Housemates.Where(h => h.currentLocation == housemate.currentLocation).Count() > 0;
+                    bool alone = Housemates.Where(h => h.currentLocation == housemate.currentLocation).Count() == 0;
                     
                     List<Action> availableActions = Actions
                         //Valid Location
@@ -54,10 +55,17 @@ namespace RealitySim
                     Housemate? selectedTarget = null;
                     if (selectedAction.RequiresTarget)
                     {
-                        selectedTarget = housemate.SelectTarget(selectedAction);
+                        selectedTarget = housemate.SelectTarget(
+                            selectedAction.TargetType,
+                            nearbyHousemates,
+                            WitnessedEvents.Where(w => w.Witness == housemate).ToList()
+                        );
                     }
 
                     PerformAction(selectedAction, housemate, selectedTarget, housemate.currentLocation);
+                    
+                    Console.WriteLine(stars);
+                    string any_string = GetInput("Press ENTER to continue");
                 }
                 
                 //Day is over once everyone is asleep

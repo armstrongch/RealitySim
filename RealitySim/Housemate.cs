@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,8 @@ namespace RealitySim
 
         public int? PlayerNum { get; private set; }
 
+        Random rand = new Random();
+
         public Housemate(string name, LOCATION currentLocation, int? playerNum)
         {
             this.Name = name;
@@ -39,8 +42,13 @@ namespace RealitySim
 
         public bool HasPositiveOpinionOf(Housemate housemate)
         {
+            return GetOpinionOf(housemate) >= 0;
+        }
+
+        public int GetOpinionOf(Housemate housemate)
+        {
             IncrementOpinion(housemate, 0);
-            return Opinions[housemate] >= 0;
+            return Opinions[housemate];
         }
 
         public void ShowInfo(List<(Housemate, RELATIONSHIP)> rels, List<Housemate> nearbyHousemates)
@@ -86,17 +94,74 @@ namespace RealitySim
         
         public Action SelectAction(List<Action> availableActions)
         {
-            throw new NotImplementedException();
+            Action selectedAction = availableActions.OrderBy(a => rand.Next()).First();
+            return selectedAction;
         }
 
-        public Housemate SelectTarget(Action action)
+        public Housemate SelectTarget(CPU_TARGET_TYPE targetType, List<Housemate> nearbyHousemates, List<WitnessedEvent> witnessedEvents)
         {
-            throw new NotImplementedException();
-        }
+            if (nearbyHousemates.Count == 0)
+            {
+                throw new Exception("Cannot select a target with no nearby housemates.");
+            }
+            
+            Housemate? target;
+            List<Housemate> nearbyFriendlies = nearbyHousemates.Where(h => HasPositiveOpinionOf(h)).ToList();
+            List<Housemate> nearbyEnemies = nearbyHousemates.Where(h => !HasPositiveOpinionOf(h)).ToList();
+            
+            List<Housemate> nearbyPerpetrators = witnessedEvents
+                .Select(w => w.Perpetrator)
+                .Where(w => nearbyHousemates.Contains(w))
+                .ToList();
 
-        private void BuildRelationshipMatrix()
-        {
 
+            switch (targetType)
+            {
+                case CPU_TARGET_TYPE.RANDOM:
+                    target = nearbyHousemates.OrderBy(h => rand.Next()).First();
+                    break;
+                
+                case CPU_TARGET_TYPE.RANDOM_FRIENDLY:
+                    target = nearbyFriendlies.OrderBy(h => rand.Next()).FirstOrDefault();
+                    break;
+                
+                case CPU_TARGET_TYPE.RANDOM_ENEMY:
+                    target = nearbyEnemies.OrderBy(h => rand.Next()).FirstOrDefault();
+                    break;
+
+                case CPU_TARGET_TYPE.BEST_FRIEND:
+                    target = nearbyHousemates.OrderBy(h => -1 * GetOpinionOf(h)).First();
+                    break;
+
+                case CPU_TARGET_TYPE.WORST_ENEMY:
+                    target = nearbyHousemates.OrderBy(h => GetOpinionOf(h)).First();
+                    break;
+
+                case CPU_TARGET_TYPE.WORST_ENEMY_WITH_DIRT:
+                    target = nearbyPerpetrators.OrderBy(h => GetOpinionOf(h)).First();
+                    if (target == null)
+                    {
+                        target = SelectTarget(CPU_TARGET_TYPE.WORST_ENEMY, nearbyHousemates, witnessedEvents);
+                    }
+                    break;
+                case CPU_TARGET_TYPE.NONE:
+                default:
+                    throw new Exception($"Target Type is required.");
+            }
+
+            if (target == null)
+            {
+                if (targetType == CPU_TARGET_TYPE.RANDOM)
+                {
+                    throw new Exception("Could not find a random target!");
+                }
+                else
+                {
+                    target = SelectTarget(CPU_TARGET_TYPE.RANDOM, nearbyHousemates, witnessedEvents);
+                }
+            }
+
+            return target;
         }
     }
 }

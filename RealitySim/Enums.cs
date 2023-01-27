@@ -9,7 +9,8 @@ namespace RealitySim
         {
             HOUSE,
             WORK,
-            CLUB
+            CLUB,
+            DREAMLAND
         }
 
         public enum ACTION
@@ -33,6 +34,17 @@ namespace RealitySim
             LIKE_AND_DISLIKED_BY,
             DISLIKE_AND_LIKED_BY,
             DATING
+        }
+
+        public enum CPU_TARGET_TYPE
+        {
+            RANDOM,
+            RANDOM_FRIENDLY,
+            RANDOM_ENEMY,
+            BEST_FRIEND,
+            WORST_ENEMY,
+            WORST_ENEMY_WITH_DIRT,
+            NONE
         }
     }
 }
