@@ -207,8 +207,8 @@ namespace RealitySim
                 string isAre = witnesses.Count == 1 ? "is" : "are";
                 Console.WriteLine($"{GetNames(witnesses)} {isAre} nearby.");
 
-                List<Housemate> likers = witnesses.Where(w => w.HasPositiveOpinionOf(housemate)).ToList();
-                List<Housemate> dislikers = witnesses.Where(w => !w.HasPositiveOpinionOf(housemate)).ToList();
+                List<Housemate> likers = witnesses.Where(w => w.HasPositiveOpinionOf(target)).ToList();
+                List<Housemate> dislikers = witnesses.Where(w => !w.HasPositiveOpinionOf(target)).ToList();
 
                 string declines = "declines";
                 string improves = "improves";
@@ -236,7 +236,7 @@ namespace RealitySim
 
                 foreach (Housemate witness in witnesses)
                 {
-                    int changeAmount = (witness.HasPositiveOpinionOf(housemate) ^ positiveAction ? -1 : 1) * positiveChangeAmount;
+                    int changeAmount = (witness.HasPositiveOpinionOf(target) ^ positiveAction ? -1 : 1) * positiveChangeAmount;
                     witness.IncrementOpinion(housemate, changeAmount);
                 }
             }
