@@ -98,7 +98,7 @@ namespace RealitySim
             return selectedAction;
         }
 
-        public Housemate SelectTarget(CPU_TARGET_TYPE targetType, List<Housemate> nearbyHousemates, List<WitnessedEvent> witnessedEvents)
+        public Housemate SelectTarget(CPU_TARGET_TYPE targetType, List<Housemate> nearbyHousemates, List<WitnessedEvent> witnessedEvents, Housemate? SO)
         {
             if (nearbyHousemates.Count == 0)
             {
@@ -133,6 +133,10 @@ namespace RealitySim
                     target = nearbyHousemates.OrderBy(h => -1 * GetOpinionOf(h)).First();
                     break;
 
+                case CPU_TARGET_TYPE.BEST_FRIEND_EXCLUDING_SO:
+                    target = nearbyHousemates.Where(h => h != SO).OrderBy(h => -1 * GetOpinionOf(h)).FirstOrDefault();
+                    break;
+
                 case CPU_TARGET_TYPE.WORST_ENEMY:
                     target = nearbyHousemates.OrderBy(h => GetOpinionOf(h)).First();
                     break;
@@ -141,7 +145,7 @@ namespace RealitySim
                     target = nearbyPerpetrators.OrderBy(h => GetOpinionOf(h)).First();
                     if (target == null)
                     {
-                        target = SelectTarget(CPU_TARGET_TYPE.WORST_ENEMY, nearbyHousemates, witnessedEvents);
+                        target = SelectTarget(CPU_TARGET_TYPE.WORST_ENEMY, nearbyHousemates, witnessedEvents, SO);
                     }
                     break;
                 case CPU_TARGET_TYPE.NONE:
@@ -157,7 +161,7 @@ namespace RealitySim
                 }
                 else
                 {
-                    target = SelectTarget(CPU_TARGET_TYPE.RANDOM, nearbyHousemates, witnessedEvents);
+                    target = SelectTarget(CPU_TARGET_TYPE.RANDOM, nearbyHousemates, witnessedEvents, SO);
                 }
             }
 

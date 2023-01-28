@@ -30,7 +30,6 @@ namespace RealitySim
                 foreach(Housemate housemate in Housemates.Where(h => h.Awake).ToList())
                 {
                     Console.WriteLine(stars);
-                    Console.WriteLine($"It is {housemate.Name}'s turn!");
 
                     List<Housemate> nearbyHousemates = Housemates
                         .Where(h => h.currentLocation == housemate.currentLocation)
@@ -60,7 +59,8 @@ namespace RealitySim
                         selectedTarget = housemate.SelectTarget(
                             selectedAction.TargetType,
                             nearbyHousemates,
-                            WitnessedEvents.Where(w => w.Witness == housemate).ToList()
+                            WitnessedEvents.Where(w => w.Witness == housemate).ToList(),
+                            GetSignificantOther(housemate)
                         );
                     }
 

@@ -42,6 +42,7 @@ namespace RealitySim
             RANDOM_FRIENDLY,
             RANDOM_ENEMY,
             BEST_FRIEND,
+            BEST_FRIEND_EXCLUDING_SO,
             WORST_ENEMY,
             WORST_ENEMY_WITH_DIRT,
             NONE
