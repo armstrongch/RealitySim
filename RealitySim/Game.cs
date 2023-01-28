@@ -25,9 +25,9 @@ namespace RealitySim
             InitializeActions();
 
             //TEST
-            Action relationship = Actions.Where(a => a.Id == ACTION.ENTER_A_RELATIONSHIP).First();
-            PerformAction(relationship, Housemates[0], Housemates[1], LOCATION.HOUSE);
-            PerformAction(relationship, Housemates[1], Housemates[2], LOCATION.HOUSE);
+            //Action relationship = Actions.Where(a => a.Id == ACTION.ENTER_A_RELATIONSHIP).First();
+            //PerformAction(relationship, Housemates[0], Housemates[1], LOCATION.HOUSE);
+            //PerformAction(relationship, Housemates[1], Housemates[2], LOCATION.HOUSE);
 
             bool everyoneIsAsleep = false;
             while (!everyoneIsAsleep)
