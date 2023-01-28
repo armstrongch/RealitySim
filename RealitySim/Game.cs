@@ -25,12 +25,9 @@ namespace RealitySim
             InitializeActions();
 
             //TEST
-            /*Action punch = Actions.Where(a => a.Id == ACTION.PUNCH).First();
-            for (int i = 2; i < Housemates.Count; i += 1)
-            {
-                Housemates[i].IncrementOpinion(Housemates[0], 3 - (6 * (i % 2)));
-            }
-            PerformAction(punch, Housemates[1], Housemates[0], LOCATION.HOUSE);*/
+            Action relationship = Actions.Where(a => a.Id == ACTION.ENTER_A_RELATIONSHIP).First();
+            PerformAction(relationship, Housemates[0], Housemates[1], LOCATION.HOUSE);
+            PerformAction(relationship, Housemates[1], Housemates[2], LOCATION.HOUSE);
 
             bool everyoneIsAsleep = false;
             while (!everyoneIsAsleep)

@@ -103,39 +103,50 @@ namespace RealitySim
                     }
                     else
                     {
-                        Console.WriteLine($"{housemate.Name} wants to make it official with {targetName}.");
-
-                        Housemate? targetSO = GetSignificantOther(target);
-                        bool targetIsSingle = targetSO == null;
-
-                        if (!targetIsSingle)
+                        Housemate? housemateSO = GetSignificantOther(housemate);
+                        if (housemateSO != null)
                         {
-                            Console.WriteLine($"{targetName} is currently dating {targetSO.Name}.");
-                            bool targetLikesSO = target.HasPositiveOpinionOf(targetSO);
-                            if (targetLikesSO)
-                            {
-                                Console.WriteLine($"This erodes {targetSO.Name}'s opinion of {housemate.Name}");
-                                targetSO.IncrementOpinion(housemate, -3);
-                                targetIsSingle = false;
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{targetName} is dissatisfied with his relationship.");
-                                Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
-                                target.Energy += breakup.EnergyCost;
-                                PerformAction(breakup, target, null, housemate.currentLocation);
-                            }
-                        }
-
-                        if (targetIsSingle && target.HasPositiveOpinionOf(housemate))
-                        {
-                            Console.WriteLine($"{targetName} is into {housemate.Name} too, and they enter into a relationship.");
-                            Relationships.Add((housemate, target));
-                            IncrementKarma(housemate, target, true, 1);
+                            Console.WriteLine($"{housemate.Name} wants to start a relationship with {targetName}, but he is already dating {housemateSO.Name}.");
+                            Action flirt = Actions.Where(a => a.Id == ACTION.FLIRT).First();
+                            housemate.Energy += flirt.EnergyCost;
+                            PerformAction(flirt, housemate, target, housemate.currentLocation);
                         }
                         else
                         {
-                            Console.WriteLine($"{targetName} rejects {housemate.Name}");
+                            Console.WriteLine($"{housemate.Name} wants to make it official with {targetName}.");
+
+                            Housemate? targetSO = GetSignificantOther(target);
+                            bool targetIsSingle = targetSO == null;
+
+                            if (!targetIsSingle)
+                            {
+                                Console.WriteLine($"{targetName} is currently dating {targetSO.Name}.");
+                                bool targetLikesSO = target.HasPositiveOpinionOf(targetSO);
+                                if (targetLikesSO)
+                                {
+                                    Console.WriteLine($"This erodes {targetSO.Name}'s opinion of {housemate.Name}");
+                                    targetSO.IncrementOpinion(housemate, -3);
+                                    targetIsSingle = false;
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{targetName} is dissatisfied with his relationship.");
+                                    Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
+                                    target.Energy += breakup.EnergyCost;
+                                    PerformAction(breakup, target, null, housemate.currentLocation);
+                                }
+                            }
+
+                            if (targetIsSingle && target.HasPositiveOpinionOf(housemate))
+                            {
+                                Console.WriteLine($"{targetName} is into {housemate.Name} too, and they enter into a relationship.");
+                                Relationships.Add((housemate, target));
+                                IncrementKarma(housemate, target, true, 1);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{targetName} rejects {housemate.Name}");
+                            }
                         }
                     }
 
