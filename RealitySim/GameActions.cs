@@ -94,13 +94,8 @@ namespace RealitySim
                     }
                     break;
                 case ACTION.ENTER_A_RELATIONSHIP:
-                    Console.WriteLine($"{housemate.Name} wants to make it official with {targetName}.");
-
-                    Housemate? targetSO = GetSignificantOther(target);
-                    bool targetIsSingle = targetSO == null;
-
                     //If you are trying to start a relationship with your current SO for some reason
-                    if (!targetIsSingle && targetSO == GetSignificantOther(housemate))
+                    if (AreCurrentlyDating(housemate, target))
                     {
                         Console.WriteLine($"{targetName} is falling deeper in love with {housemate.Name}.");
                         target.IncrementOpinion(housemate, 2);
@@ -108,6 +103,11 @@ namespace RealitySim
                     }
                     else
                     {
+                        Console.WriteLine($"{housemate.Name} wants to make it official with {targetName}.");
+
+                        Housemate? targetSO = GetSignificantOther(target);
+                        bool targetIsSingle = targetSO == null;
+
                         if (!targetIsSingle)
                         {
                             Console.WriteLine($"{targetName} is currently dating {targetSO.Name}.");
@@ -116,7 +116,7 @@ namespace RealitySim
                             {
                                 Console.WriteLine($"This erodes {targetSO.Name}'s opinion of {housemate.Name}");
                                 targetSO.IncrementOpinion(housemate, -3);
-                                targetIsSingle = true;
+                                targetIsSingle = false;
                             }
                             else
                             {
@@ -192,7 +192,7 @@ namespace RealitySim
         private void WitnessAction(Housemate housemate, Housemate target, List<Housemate> witnesses, Housemate victim, ACTION actionId)
         {
 
-            Console.WriteLine($"{GetNames(witnesses)} are will remember this.");
+            Console.WriteLine($"{GetNames(witnesses)} will remember this.");
             
             foreach (Housemate witness in witnesses)
             {
@@ -202,41 +202,53 @@ namespace RealitySim
 
         private void ReactToInteraction(Housemate housemate, Housemate target, List<Housemate> witnesses, bool positiveAction, int positiveChangeAmount, ACTION actionId)
         {
-            string isAre = witnesses.Count == 1 ? "is" : "are";
-            Console.WriteLine($"{GetNames(witnesses)} {isAre} nearby.");
-            
-            List<Housemate> likers = witnesses.Where(w => w.HasPositiveOpinionOf(housemate)).ToList();
-            List<Housemate> dislikers = witnesses.Where(w => !w.HasPositiveOpinionOf(housemate)).ToList();
-
-            string declines = "declines";
-            string improves = "improves";
-
-            if (likers.Count > 0)
+            if (witnesses.Count > 0)
             {
-                string hasHave = likers.Count == 1 ? "has" : "have";
-                string hisTheir = likers.Count == 1 ? "his" : "their";
+                string isAre = witnesses.Count == 1 ? "is" : "are";
+                Console.WriteLine($"{GetNames(witnesses)} {isAre} nearby.");
 
-                string likerString = $"{GetNames(likers)} {hasHave} no beef with {target.Name}, " +
-                    $"so {hisTheir} opinion of {housemate.Name} {(positiveAction ? improves : declines)}.";
+                List<Housemate> likers = witnesses.Where(w => w.HasPositiveOpinionOf(housemate)).ToList();
+                List<Housemate> dislikers = witnesses.Where(w => !w.HasPositiveOpinionOf(housemate)).ToList();
 
-                Console.WriteLine(likerString);
+                string declines = "declines";
+                string improves = "improves";
+
+                if (likers.Count > 0)
+                {
+                    string hasHave = likers.Count == 1 ? "has" : "have";
+                    string hisTheir = likers.Count == 1 ? "his" : "their";
+
+                    string likerString = $"{GetNames(likers)} {hasHave} no beef with {target.Name}, " +
+                        $"so {hisTheir} opinion of {housemate.Name} {(positiveAction ? improves : declines)}.";
+
+                    Console.WriteLine(likerString);
+                }
+
+                if (dislikers.Count > 0)
+                {
+                    string dislikes = dislikers.Count == 1 ? "dislikes" : "dislike";
+                    string hisTheir = dislikers.Count == 1 ? "his" : "their";
+                    string dislikerString = $"{GetNames(dislikers)} already {dislikes} {target.Name}, " +
+                        $"so {hisTheir} opinion of {housemate.Name} {(positiveAction ? declines : improves)}.";
+
+                    Console.WriteLine(dislikerString);
+                }
+
+                foreach (Housemate witness in witnesses)
+                {
+                    int changeAmount = (witness.HasPositiveOpinionOf(housemate) ^ positiveAction ? -1 : 1) * positiveChangeAmount;
+                    witness.IncrementOpinion(housemate, changeAmount);
+                }
             }
-
-            if (dislikers.Count > 0)
+            else
             {
-                string dislikes = dislikers.Count == 1 ? "dislikes" : "dislike";
-                string hisTheir = likers.Count == 1 ? "his" : "their";
-                string dislikerString = $"{GetNames(dislikers)} already {dislikes} {target.Name}, " +
-                    $"so {hisTheir} opinion of {housemate.Name} {(positiveAction ? declines : improves)}.";
-
-                Console.WriteLine(dislikerString);
+                Console.WriteLine("There are no witnesses.");
             }
+        }
 
-            foreach (Housemate witness in witnesses)
-            {
-                int changeAmount = (witness.HasPositiveOpinionOf(housemate) ^ positiveAction ? -1 : 1) * positiveChangeAmount;
-                witness.IncrementOpinion(housemate, changeAmount);
-            }
+        private bool AreCurrentlyDating(Housemate housemate1, Housemate housemate2)
+        {
+            return Relationships.Contains((housemate1, housemate2)) || Relationships.Contains((housemate2, housemate1));
         }
 
         private string GetNames(List<Housemate> housemates)

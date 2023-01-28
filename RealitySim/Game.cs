@@ -24,6 +24,11 @@ namespace RealitySim
             InitializeHousemates(numPlayers);
             InitializeActions();
 
+            //TEST
+            //Action startARelationship = Actions.Where(a => a.Id == ACTION.ENTER_A_RELATIONSHIP).First();
+            //PerformAction(startARelationship, Housemates[0], Housemates[1], LOCATION.HOUSE);
+            //PerformAction(startARelationship, Housemates[1], Housemates[0], LOCATION.HOUSE);
+
             bool everyoneIsAsleep = false;
             while (!everyoneIsAsleep)
             {
