@@ -75,11 +75,10 @@ namespace RealitySim
                     Housemate? SO = GetSignificantOther(housemate);
                     if (SO != null && SO != target)
                     {
-                        Console.WriteLine($"{housemate.Name} is currently in a relationship with {SO.Name}.");
                         // If your SO witnessed the event, the will break up with you.
                         if (witnesses.Contains(SO))
                         {
-                            Console.WriteLine($"{SO.Name} is nearby.");
+                            Console.WriteLine($"{SO.Name} ({housemate.Name}'s current partner) is nearby.");
                             //Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
                             //SO.Energy += breakup.EnergyCost;
                             //PerformAction(breakup, SO, null, housemate.currentLocation);
