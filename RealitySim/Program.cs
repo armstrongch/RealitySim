@@ -1,8 +1,6 @@
-﻿using RealitySim;
-using System;
+﻿using System;
 using static RealitySim.Input;
-
-namespace MyProject;
+namespace RealitySim;
 class Program
 {   
     static void Main(string[] args)
@@ -13,6 +11,6 @@ class Program
             "How many human players are there?",
             new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8"}
         ));
-        Game game = new Game(numPlayers);
+        Game game = new Game(numPlayers, true);
     }
 }

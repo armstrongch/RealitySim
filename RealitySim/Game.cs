@@ -19,67 +19,72 @@ namespace RealitySim
         List<WitnessedEvent> WitnessedEvents = new List<WitnessedEvent>();
         const string stars = "*******************************************************";
 
-        public Game(int numPlayers)
+        public Game(int numPlayers, bool testMode)
         {
             InitializeHousemates(numPlayers);
             InitializeActions();
 
-            //TEST
-            //Action relationship = Actions.Where(a => a.Id == ACTION.ENTER_A_RELATIONSHIP).First();
-            //PerformAction(relationship, Housemates[0], Housemates[1], LOCATION.HOUSE);
-            //PerformAction(relationship, Housemates[1], Housemates[2], LOCATION.HOUSE);
-
-            bool everyoneIsAsleep = false;
-            while (!everyoneIsAsleep)
+            if (!testMode)
             {
-                foreach(Housemate housemate in Housemates.Where(h => h.Awake).ToList())
+
+                bool everyoneIsAsleep = false;
+                while (!everyoneIsAsleep)
                 {
-                    Console.WriteLine(stars);
-
-                    List<Housemate> nearbyHousemates = Housemates
-                        .Where(h => h.currentLocation == housemate.currentLocation)
-                        .Where(h => h != housemate)
-                        .ToList();
-
-                    if (housemate.PlayerNum is not null)
+                    foreach (Housemate housemate in Housemates.Where(h => h.Awake).ToList())
                     {
-                        housemate.ShowInfo(BuildRelationshipMatrix(housemate), nearbyHousemates);
+                        Console.WriteLine(stars);
+
+                        List<Housemate> nearbyHousemates = Housemates
+                            .Where(h => h.currentLocation == housemate.currentLocation)
+                            .Where(h => h != housemate)
+                            .ToList();
+
+                        if (housemate.PlayerNum is not null)
+                        {
+                            housemate.ShowInfo(BuildRelationshipMatrix(housemate), nearbyHousemates);
+                        }
+
+                        bool alone = nearbyHousemates.Count == 0;
+
+                        List<Action> availableActions = Actions
+                            //Valid Location
+                            .Where(a => a.ValidLocations.Contains(housemate.currentLocation))
+                            //Other housemates in location, or action does not require target
+                            .Where(a => !a.RequiresTarget || !alone)
+                            //Housemate has enough energy
+                            .Where(a => a.EnergyCost <= housemate.Energy)
+                            .ToList();
+
+                        Action selectedAction = housemate.SelectAction(availableActions);
+                        Housemate? selectedTarget = null;
+                        if (selectedAction.RequiresTarget)
+                        {
+                            selectedTarget = housemate.SelectTarget(
+                                selectedAction.TargetType,
+                                nearbyHousemates,
+                                WitnessedEvents.Where(w => w.Witness == housemate).ToList(),
+                                GetSignificantOther(housemate)
+                            );
+                        }
+
+                        PerformAction(selectedAction, housemate, selectedTarget, housemate.currentLocation);
+
+                        Console.WriteLine(stars);
+                        string any_string = GetInput("Press ENTER to continue");
                     }
 
-                    bool alone = nearbyHousemates.Count == 0;
-
-                    List<Action> availableActions = Actions
-                        //Valid Location
-                        .Where(a => a.ValidLocations.Contains(housemate.currentLocation))
-                        //Other housemates in location, or action does not require target
-                        .Where(a => !a.RequiresTarget || !alone)
-                        //Housemate has enough energy
-                        .Where(a => a.EnergyCost <= housemate.Energy)
-                        .ToList();
-                    
-                    Action selectedAction = housemate.SelectAction(availableActions);
-                    Housemate? selectedTarget = null;
-                    if (selectedAction.RequiresTarget)
-                    {
-                        selectedTarget = housemate.SelectTarget(
-                            selectedAction.TargetType,
-                            nearbyHousemates,
-                            WitnessedEvents.Where(w => w.Witness == housemate).ToList(),
-                            GetSignificantOther(housemate)
-                        );
-                    }
-
-                    PerformAction(selectedAction, housemate, selectedTarget, housemate.currentLocation);
-                    
-                    Console.WriteLine(stars);
-                    string any_string = GetInput("Press ENTER to continue");
+                    //Day is over once everyone is asleep
+                    everyoneIsAsleep = !Housemates.Where(h => h.Awake).Any();
                 }
-                
-                //Day is over once everyone is asleep
-                everyoneIsAsleep = !Housemates.Where(h => h.Awake).Any();
+                currentDayNum += 1;
+                throw new NotImplementedException();
             }
-            currentDayNum += 1;
-            throw new NotImplementedException();
+            else
+            {
+                RunTests();
+            }
         }
+
+
     }
 }

@@ -22,6 +22,7 @@ namespace RealitySim
 
             string targetName = target == null ? string.Empty : target.Name;
             
+            Housemate? SO = GetSignificantOther(housemate);
 
             List<Housemate> witnesses = Housemates
                 .Where(h => h.currentLocation == housemate.currentLocation)
@@ -72,17 +73,21 @@ namespace RealitySim
                     target.IncrementOpinion(housemate, 2);
 
                     // If you are cheating on your SO
-                    Housemate? SO = GetSignificantOther(housemate);
                     if (SO != null && SO != target)
                     {
                         // If your SO witnessed the event, the will break up with you.
                         if (witnesses.Contains(SO))
                         {
-                            Console.WriteLine($"{SO.Name} ({housemate.Name}'s current partner) is nearby.");
-                            //Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
-                            //SO.Energy += breakup.EnergyCost;
-                            //PerformAction(breakup, SO, null, housemate.currentLocation);
-                            throw new NotImplementedException("What should happen when your SO sees you cheating?");
+                            Console.WriteLine($"{SO.Name} ({housemate.Name}'s current partner) is devastated.");
+                            SO.IncrementOpinion(housemate, -3);
+                            IncrementKarma(housemate, SO, false, 3);
+
+                            if (!SO.HasPositiveOpinionOf(housemate))
+                            {
+                                Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
+                                SO.Energy += breakup.EnergyCost;
+                                PerformAction(breakup, SO, null, housemate.currentLocation);
+                            }
                         }
                         else
                         {
@@ -150,6 +155,27 @@ namespace RealitySim
                     }
 
                     break;
+                case ACTION.BREAK_UP:
+                    if (SO != null)
+                    {
+                        Console.WriteLine($"{housemate.Name} has decided to break up with {SO.Name}.");
+                        if (SO.HasPositiveOpinionOf(housemate))
+                        {
+                            Console.WriteLine($"{SO.Name} is heartbroken.");
+                            SO.IncrementOpinion(housemate, -2);
+                            IncrementKarma(housemate, SO, false, 2);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{SO.Name} wasn't really into {housemate.Name} anyway, so there are no hard feelings.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{housemate.Name} declares that he is single and ready to mingle.");
+                        IncrementKarma(housemate, housemate, true, 1);
+                    }
+                    break;
                 default:
                     throw new NotImplementedException();
                     break;
@@ -189,12 +215,12 @@ namespace RealitySim
             if (targetHasPositiveKarma != positiveRelationship)
             {
                 printString += $"so {housemate.Name}'s reputation with audiences declines.";
-                housemate.Karma -= Math.Abs(target.Karma);
+                housemate.Karma -= Math.Abs(positiveChangeAmount);
             }
             else
             {
                 printString += $"so {housemate.Name}'s reputation with audiences improves.";
-                housemate.Karma += Math.Abs(target.Karma);
+                housemate.Karma += Math.Abs(positiveChangeAmount);
             }
             Console.WriteLine(printString);
         }
@@ -202,7 +228,10 @@ namespace RealitySim
         private void WitnessAction(Housemate housemate, Housemate target, List<Housemate> witnesses, Housemate victim, ACTION actionId)
         {
 
-            Console.WriteLine($"{GetNames(witnesses)} will remember this.");
+            if (witnesses.Count > 0)
+            {
+                Console.WriteLine($"{GetNames(witnesses)} will remember this.");
+            }
             
             foreach (Housemate witness in witnesses)
             {
@@ -246,7 +275,7 @@ namespace RealitySim
 
                 foreach (Housemate witness in witnesses)
                 {
-                    int changeAmount = (witness.HasPositiveOpinionOf(target) ^ positiveAction ? -1 : 1) * positiveChangeAmount;
+                    int changeAmount = (witness.HasPositiveOpinionOf(target) ^ positiveAction ? -1 : 1) * Math.Abs(positiveChangeAmount);
                     witness.IncrementOpinion(housemate, changeAmount);
                 }
             }
