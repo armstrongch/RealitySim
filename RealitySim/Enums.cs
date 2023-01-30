@@ -24,7 +24,9 @@ namespace RealitySim
             FLIRT,
             ENTER_A_RELATIONSHIP,
             BREAK_UP,
-            TATTLE
+            TATTLE,
+            BUY_COFFEE,
+            DRINK_COFFEE
         }
 
         public enum RELATIONSHIP

@@ -14,7 +14,7 @@ namespace RealitySim
         public Dictionary<Housemate, int> Opinions { get; private set; } = new Dictionary<Housemate, int>();
         public string Name { get; private set; }
         public int Karma { get; set; } = 0;
-        public int Cash { get; set; } = 500;
+        public int Cash { get; set; } = 0;
         public bool Awake { get; set; } = true;
         public List<(int,ACTION)> ActionHistory { get; private set; } = new List<(int, ACTION)>();
 
@@ -166,6 +166,14 @@ namespace RealitySim
             }
 
             return target;
+        }
+
+        public int GetActionHistoryCount(ACTION id, int currentDayNum, int numDaysExcludingToday)
+        {
+            return ActionHistory
+                        .Where(h => h.Item1 >= currentDayNum - numDaysExcludingToday)
+                        .Where(h => h.Item2 == id)
+                        .Count();
         }
     }
 }
