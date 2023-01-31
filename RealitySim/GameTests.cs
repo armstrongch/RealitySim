@@ -21,9 +21,48 @@ namespace RealitySim
             Action FLIRT = Actions.Where(a => a.Id == ACTION.FLIRT).First();
             */
 
-            TATTLE_ON_Tests();
+            SHOT_Tests();
 
+            Console.WriteLine(stars);
+            Console.WriteLine("PRESS ENTER TO EXIST");
             Console.ReadLine();
+        }
+
+        public void SHOT_Tests()
+        {
+            Housemate h1 = Housemates[0];
+            LOCATION CLUB = LOCATION.CLUB;
+            LOCATION HOUSE = LOCATION.HOUSE;
+            Action BUY_A_SHOT = Actions.Where(a => a.Id == ACTION.BUY_A_SHOT).First();
+            Action GO_HOME = Actions.Where(a => a.Id == ACTION.GO_HOME).First();
+            Action GO_TO_BED = Actions.Where(a => a.Id == ACTION.GO_TO_BED).First();
+            
+
+            Console.WriteLine(stars);
+            Console.WriteLine("Test: Can't afford a shot.");
+            Console.WriteLine(stars);
+            h1.currentLocation = CLUB;
+            h1.Cash = 0;
+            PerformAction(BUY_A_SHOT, h1, null, CLUB);
+
+            Console.WriteLine(stars);
+            Console.WriteLine("Test: Take a shot.");
+            Console.WriteLine(stars);
+            h1.Cash = 200;
+            PerformAction(BUY_A_SHOT, h1, null, CLUB);
+
+            Console.WriteLine(stars);
+            Console.WriteLine("Test: Get wasted.");
+            for (int i = 0; i < 10; i += 1)
+            {
+                Console.WriteLine(stars);
+                PerformAction(BUY_A_SHOT, h1, null, CLUB);
+            }
+            Console.WriteLine(stars);
+            PerformAction(GO_HOME, h1, null, CLUB);
+            Console.WriteLine(stars);
+            PerformAction(GO_TO_BED, h1, null, HOUSE);
+
         }
 
         private void TATTLE_ON_Tests()

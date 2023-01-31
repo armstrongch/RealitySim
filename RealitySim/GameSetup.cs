@@ -61,8 +61,11 @@ namespace RealitySim
                 new Action(ACTION.GO_TO_THE_CLUB, "Go to the Club", "Take a taxi to the nightclub.", work_or_house),
                 new Action(ACTION.GO_HOME, "Go Home", "Head back to the house.", club_or_work, false, 0, CPU_TARGET_TYPE.NONE),
 
-                new Action(ACTION.BUY_COFFEE, "Buy a Cup of Coffee", "Pay $5 for a caffenated beverate to boost your energy.", work, false, 0, CPU_TARGET_TYPE.NONE),
-                new Action(ACTION.DRINK_COFFEE, none, none, nowhere, false, 0, CPU_TARGET_TYPE.NONE),
+                new Action(ACTION.BUY_COFFEE, "Buy a Cup of Coffee", "Pay $5 for a caffenated beverate to boost your energy.", work),
+                new Action(ACTION.DRINK_COFFEE, none, none, nowhere),
+
+                new Action(ACTION.BUY_A_SHOT, "Buy a Shot of Alcohol", "Pay $10 for a big sip of hard liquor.", club),
+                new Action(ACTION.TAKE_A_SHOT, none, none, nowhere),
 
                 new Action(ACTION.PUNCH, "Punch", "Start a fistfight with a housemate.", all, true, 8, CPU_TARGET_TYPE.WORST_ENEMY),
                 new Action(ACTION.FLIRT, "Flirt", "Make a romantic pass at a housemate.", all, true, 4, CPU_TARGET_TYPE.RANDOM_FRIENDLY),

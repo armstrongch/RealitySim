@@ -10,23 +10,56 @@ namespace RealitySim
 {
     internal partial class Game
     {
+        List<ACTION> actionsNotImpactedByDrunkenness = new List<ACTION>() { ACTION.DRINK_COFFEE, ACTION.TAKE_A_SHOT, ACTION.BREAK_UP };
+        
         private void PerformAction(Action action, Housemate housemate, Housemate? target, LOCATION location)
         {
+            List<Housemate> witnesses = Housemates
+                .Where(h => h.currentLocation == housemate.currentLocation)
+                .Where(h => h.Name != housemate.Name && h != target)
+                .ToList();
+
+            if (!actionsNotImpactedByDrunkenness.Contains(action.Id))
+            {
+                int numDrinksToday = housemate.GetActionHistoryCount(ACTION.TAKE_A_SHOT, currentDayNum, 0);
+                if (numDrinksToday > rand.NextInt64(0, 10))
+                {
+                    string drinks = numDrinksToday == 1 ? "drink" : "drinks";
+                    Console.WriteLine($"{housemate.Name} has already had {numDrinksToday.ToString()} {drinks} today, and his decision-making is impaired.");
+                    Action FLIRT = Actions.Where(a => a.Id == ACTION.FLIRT).First();
+                    if ((witnesses.Count > 0) && (FLIRT.EnergyCost <= housemate.Energy))
+                    {
+                        action = FLIRT;
+                        target = witnesses.Where(w => w != housemate).OrderBy(w => housemate.GetOpinionOf(w)).First();
+                    }
+                }
+            }
+
+            string targetName = target == null ? string.Empty : target.Name;
+
             housemate.Energy -= action.EnergyCost;
             housemate.ActionHistory.Add((currentDayNum, action.Id));
 
-            string targetName = target == null ? string.Empty : target.Name;
-            
             Housemate? SO = GetSignificantOther(housemate);
             Housemate? targetSO = GetSignificantOther(target);
 
-            List<Housemate> witnesses = Housemates
-                .Where(h => h.currentLocation == housemate.currentLocation)
-                .Where(h => h.Name != housemate.Name && h.Name != targetName)
-                .ToList();
-
             switch (action.Id)
             {
+                case ACTION.BUY_A_SHOT:
+                    if (housemate.Cash >= 10)
+                    {
+                        housemate.Cash -= 10;
+                        DoOtherAction(housemate, ACTION.TAKE_A_SHOT, null);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{housemate.Name} doesn't have $10 to order a shot.");
+                    }
+                    break;
+                case ACTION.TAKE_A_SHOT:
+                    Console.WriteLine($"{housemate.Name} takes a shot. Viewers love to see the housemates get wasted.");
+                    housemate.Karma += 2;
+                    break;
                 case ACTION.BUY_COFFEE:
                     if (housemate.Cash >= 5)
                     {
