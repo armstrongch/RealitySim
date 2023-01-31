@@ -16,7 +16,6 @@ namespace RealitySim
         Random rand = new Random();
         int currentDayNum = 1;
         List<(Housemate, Housemate)> Relationships = new List<(Housemate, Housemate)>();
-        List<WitnessedEvent> WitnessedEvents = new List<WitnessedEvent>();
         const string stars = "*******************************************************";
 
         public Game(int numPlayers, bool testMode)
@@ -33,7 +32,6 @@ namespace RealitySim
                     foreach (Housemate housemate in Housemates.Where(h => h.Awake).ToList())
                     {
                         Console.WriteLine(stars);
-
                         List<Housemate> nearbyHousemates = Housemates
                             .Where(h => h.currentLocation == housemate.currentLocation)
                             .Where(h => h != housemate)
@@ -62,13 +60,12 @@ namespace RealitySim
                             selectedTarget = housemate.SelectTarget(
                                 selectedAction.TargetType,
                                 nearbyHousemates,
-                                WitnessedEvents.Where(w => w.Witness == housemate).ToList(),
                                 GetSignificantOther(housemate)
                             );
                         }
-
+                        
                         PerformAction(selectedAction, housemate, selectedTarget, housemate.currentLocation);
-
+                        
                         Console.WriteLine(stars);
                         string any_string = GetInput("Press ENTER to continue");
                     }
@@ -77,7 +74,7 @@ namespace RealitySim
                     everyoneIsAsleep = !Housemates.Where(h => h.Awake).Any();
                 }
                 currentDayNum += 1;
-                throw new NotImplementedException();
+                throw new NotImplementedException("Everyone is asleep.");
             }
             else
             {

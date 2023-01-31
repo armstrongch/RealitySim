@@ -10,6 +10,18 @@ namespace RealitySim
 {
     internal partial class Game
     {
+        private void ChallengeRelationship(Housemate victim, Housemate perp)
+        {
+            Console.WriteLine($"{victim.Name} ({perp.Name}'s current partner) is devastated.");
+            victim.IncrementOpinion(perp, -3);
+            IncrementKarma(perp, victim, false, 3);
+
+            if (!victim.HasPositiveOpinionOf(perp))
+            {
+                DoOtherAction(victim, ACTION.BREAK_UP, null);
+            }
+        }
+        
         private void DoOtherAction(Housemate housemate, ACTION id, Housemate? target)
         {
             Action action = Actions.Where(a => a.Id == id).First();
@@ -19,6 +31,11 @@ namespace RealitySim
 
         private Housemate? GetSignificantOther(Housemate? housemate)
         {
+            if (housemate == null)
+            {
+                return null;
+            }
+            
             for (int i = 0; i < Relationships.Count(); i += 1)
             {
                 if (Relationships[i].Item1 == housemate)
@@ -30,7 +47,20 @@ namespace RealitySim
                     return Relationships[i].Item1;
                 }
             }
+            
             return null;
+        }
+
+        private void BreakUp(Housemate housemate)
+        {
+            foreach((Housemate, Housemate) rel in Relationships)
+            {
+                if ((rel.Item1 == housemate) || (rel.Item2 == housemate))
+                {
+                    Relationships.Remove(rel);
+                    break;
+                }
+            }
         }
 
         private void IncrementKarma(Housemate housemate, Housemate target, bool positiveRelationship, int positiveChangeAmount)
@@ -70,7 +100,7 @@ namespace RealitySim
 
             foreach (Housemate witness in witnesses)
             {
-                WitnessedEvents.Add(new WitnessedEvent(witness, housemate, victim, target, actionId));
+                housemate.WitnessedInfidelities.Add(new WitnessedInfidelity(housemate, victim, target));
             }
         }
 

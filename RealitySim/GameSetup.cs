@@ -68,7 +68,7 @@ namespace RealitySim
                 new Action(ACTION.FLIRT, "Flirt", "Make a romantic pass at a housemate.", all, true, 4, CPU_TARGET_TYPE.RANDOM_FRIENDLY),
                 new Action(ACTION.ENTER_A_RELATIONSHIP, "Enter a Relationship", "Become exclusive partners with a housemate.", all, true, 4, CPU_TARGET_TYPE.BEST_FRIEND_EXCLUDING_SO),
                 new Action(ACTION.BREAK_UP, "Break Up", "End your current relationship.", all, false, 8, CPU_TARGET_TYPE.NONE),
-                //new Action(ACTION.TATTLE, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4, CPU_TARGET_TYPE.WORST_ENEMY_WITH_DIRT),
+                new Action(ACTION.TATTLE_TO, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4, CPU_TARGET_TYPE.BEST_FRIEND_WITH_DIRT),
             };
         }
     }

@@ -14,9 +14,10 @@ namespace RealitySim
         public Dictionary<Housemate, int> Opinions { get; private set; } = new Dictionary<Housemate, int>();
         public string Name { get; private set; }
         public int Karma { get; set; } = 0;
-        public int Cash { get; set; } = 0;
+        public int Cash { get; set; } = 150;
         public bool Awake { get; set; } = true;
         public List<(int,ACTION)> ActionHistory { get; private set; } = new List<(int, ACTION)>();
+        public List<WitnessedInfidelity> WitnessedInfidelities { get; private set; } = new List<WitnessedInfidelity>();
 
         public int Energy { get; set; } = HousemateMaxEnergy;
 
@@ -63,19 +64,15 @@ namespace RealitySim
             string noone = "No One";
 
             string like = (Karma > 0) ? "like" : "dislike";
-            housemateInfo.Add($"Viewers {like} {Name}. (Karma = {Karma.ToString()})");
+            housemateInfo.Add($"Viewers {like} {Name} (Karma = {Karma.ToString()})");
 
             string Friends = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.FRIEND).Select(r => r.Item1.Name).ToList());
-            //if (Friends == string.Empty) { Friends = noone; }
             
             string Enemies = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.ENEMY).Select(r => r.Item1.Name).ToList());
-            //if (Enemies == string.Empty) { Enemies = noone; }
             
             string Likes = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.LIKE_AND_DISLIKED_BY).Select(r => r.Item1.Name).ToList());
-            //if (Likes == string.Empty) { Likes = noone; }
 
             string Dislike = string.Join(", ", rels.Where(r => r.Item2 == RELATIONSHIP.DISLIKE_AND_LIKED_BY).Select(r => r.Item1.Name).ToList());
-            //if (Dislike == string.Empty) { Dislike = noone; }
 
             Housemate? SignficantOher = rels.Where(r => r.Item2 == RELATIONSHIP.DATING).FirstOrDefault().Item1;
             string SOName = SignficantOher == null ? noone : SignficantOher.Name;
@@ -98,7 +95,7 @@ namespace RealitySim
             return selectedAction;
         }
 
-        public Housemate SelectTarget(CPU_TARGET_TYPE targetType, List<Housemate> nearbyHousemates, List<WitnessedEvent> witnessedEvents, Housemate? SO)
+        public Housemate SelectTarget(CPU_TARGET_TYPE targetType, List<Housemate> nearbyHousemates, Housemate? SO)
         {
             if (nearbyHousemates.Count == 0)
             {
@@ -109,8 +106,8 @@ namespace RealitySim
             List<Housemate> nearbyFriendlies = nearbyHousemates.Where(h => HasPositiveOpinionOf(h)).ToList();
             List<Housemate> nearbyEnemies = nearbyHousemates.Where(h => !HasPositiveOpinionOf(h)).ToList();
             
-            List<Housemate> nearbyPerpetrators = witnessedEvents
-                .Select(w => w.Perpetrator)
+            List<Housemate> nearbyVictims = WitnessedInfidelities
+                .Select(w => w.Victim)
                 .Where(w => nearbyHousemates.Contains(w))
                 .ToList();
 
@@ -141,11 +138,11 @@ namespace RealitySim
                     target = nearbyHousemates.OrderBy(h => GetOpinionOf(h)).First();
                     break;
 
-                case CPU_TARGET_TYPE.WORST_ENEMY_WITH_DIRT:
-                    target = nearbyPerpetrators.OrderBy(h => GetOpinionOf(h)).First();
+                case CPU_TARGET_TYPE.BEST_FRIEND_WITH_DIRT:
+                    target = nearbyVictims.OrderBy(h => -1 * GetOpinionOf(h)).FirstOrDefault();
                     if (target == null)
                     {
-                        target = SelectTarget(CPU_TARGET_TYPE.WORST_ENEMY, nearbyHousemates, witnessedEvents, SO);
+                        target = SelectTarget(CPU_TARGET_TYPE.WORST_ENEMY, nearbyHousemates, SO);
                     }
                     break;
                 case CPU_TARGET_TYPE.NONE:
@@ -161,7 +158,7 @@ namespace RealitySim
                 }
                 else
                 {
-                    target = SelectTarget(CPU_TARGET_TYPE.RANDOM, nearbyHousemates, witnessedEvents, SO);
+                    target = SelectTarget(CPU_TARGET_TYPE.RANDOM, nearbyHousemates, SO);
                 }
             }
 

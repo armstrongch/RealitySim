@@ -18,6 +18,7 @@ namespace RealitySim
             string targetName = target == null ? string.Empty : target.Name;
             
             Housemate? SO = GetSignificantOther(housemate);
+            Housemate? targetSO = GetSignificantOther(target);
 
             List<Housemate> witnesses = Housemates
                 .Where(h => h.currentLocation == housemate.currentLocation)
@@ -77,6 +78,16 @@ namespace RealitySim
                 case ACTION.GO_TO_THE_CLUB:
                     housemate.currentLocation = LOCATION.CLUB;
                     Console.WriteLine($"{housemate.Name} takes a taxi to the club.");
+                    if (housemate.Cash >= 35)
+                    {
+                        Console.WriteLine($"{housemate.Name} pays the $35 cover charge.");
+                        housemate.Cash -= 35;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{housemate.Name} cannot afford the $35 cover charge.");
+                        DoOtherAction(housemate, ACTION.GO_HOME, null);
+                    }
                     break;
                 case ACTION.GO_HOME:
                     housemate.currentLocation = LOCATION.HOUSE;
@@ -99,19 +110,10 @@ namespace RealitySim
                     // If you are cheating on your SO
                     if (SO != null && SO != target)
                     {
-                        // If your SO witnessed the event, the will break up with you.
+                        // If your SO witnessed the event, they may break up with you.
                         if (witnesses.Contains(SO))
                         {
-                            Console.WriteLine($"{SO.Name} ({housemate.Name}'s current partner) is devastated.");
-                            SO.IncrementOpinion(housemate, -3);
-                            IncrementKarma(housemate, SO, false, 3);
-
-                            if (!SO.HasPositiveOpinionOf(housemate))
-                            {
-                                Action breakup = Actions.First(a => a.Id == ACTION.BREAK_UP);
-                                SO.Energy += breakup.EnergyCost;
-                                PerformAction(breakup, SO, null, housemate.currentLocation);
-                            }
+                            ChallengeRelationship(SO, housemate);
                         }
                         else
                         {
@@ -141,8 +143,7 @@ namespace RealitySim
                         {
                             Console.WriteLine($"{housemate.Name} wants to make it official with {targetName}.");
 
-                            Housemate? targetSO = GetSignificantOther(target);
-                            bool targetIsSingle = targetSO == null;
+                            bool targetIsSingle = (targetSO == null);
 
                             if (!targetIsSingle)
                             {
@@ -181,6 +182,7 @@ namespace RealitySim
                     if (SO != null)
                     {
                         Console.WriteLine($"{housemate.Name} has decided to break up with {SO.Name}.");
+                        BreakUp(housemate);
                         if (SO.HasPositiveOpinionOf(housemate))
                         {
                             Console.WriteLine($"{SO.Name} is heartbroken.");
@@ -198,15 +200,71 @@ namespace RealitySim
                         IncrementKarma(housemate, housemate, true, 1);
                     }
                     break;
+                case ACTION.TATTLE_TO:
+                    WitnessedInfidelity? w = housemate.WitnessedInfidelities.Where(w => w.Victim == target).FirstOrDefault();
+                    bool accusationIsTrue = (w != null);
+                    //If target is single
+                    if (targetSO == null)
+                    {
+                        //If the accusation is completely fabricated
+                        if (!accusationIsTrue)
+                        {
+                            //Make up a rumor to disparrage your target's best friend
+                            Housemate targetsFavoriteHousemate = Housemates
+                                .Where(h => h != housemate)
+                                .OrderBy(h => target.GetOpinionOf(h))
+                                .First();
+                            Console.WriteLine($"{housemate.Name} informs {targetName} that {targetsFavoriteHousemate.Name} has been acting shady. " +
+                                $"This damages {targetName}'s opinion of {targetsFavoriteHousemate.Name}.");
+                            target.IncrementOpinion(targetsFavoriteHousemate, -1);
+                            IncrementKarma(housemate, targetsFavoriteHousemate, false, 2);
+
+                        }
+                        else
+                        {
+                            //Reveal past infidelity
+                            Housemate perp = w.Perpetrator;
+                            housemate.WitnessedInfidelities.Remove(w);
+
+                            Console.WriteLine($"{housemate.Name} confesses to {targetName} that he was cheated on by {perp.Name} while they were together. " +
+                                $"{targetName} and {housemate.Name} grow closer during this moment of honesty.");
+
+                            target.IncrementOpinion(housemate, 2);
+                            housemate.IncrementOpinion(target, 2);
+
+                            IncrementKarma(housemate, perp, false, 2);
+                        }
+                    }
+                    else
+                    {
+                        Housemate homewrecker;
+                        Housemate perp = targetSO;
+                        //If possible, expose infidelity
+                        if (accusationIsTrue)
+                        {
+                            homewrecker = w.Target;
+                            housemate.WitnessedInfidelities.Remove(w);
+                        }
+                        else
+                        {
+                            //Otherwise, accuse your least favorite housemate of breaking up a happy relationship
+                            homewrecker = Housemates
+                                .Where(h => (h != housemate) && (h != perp) && (h != target))
+                                .OrderBy(h => -1 * housemate.GetOpinionOf(h))
+                                .First();
+                        }
+
+                        Console.WriteLine($"{housemate.Name} announces that {targetSO.Name} is cheating on {targetName} " +
+                                $"with {homewrecker.Name}.");
+                        ChallengeRelationship(target, perp);
+
+                        IncrementKarma(housemate, target, accusationIsTrue, 2);
+                    }
+                    break;
                 default:
                     throw new NotImplementedException();
                     break;
             }
         }
-
-        /*
-        new Action(ACTION.BREAK_UP, "Break Up", "End your current relationship.", all, false, 8),
-        new Action(ACTION.TATTLE, "Tattle", "Tell a housemate that their partner has been unfaithful", all, true, 4),
-         */
     }
 }

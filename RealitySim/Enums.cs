@@ -24,7 +24,7 @@ namespace RealitySim
             FLIRT,
             ENTER_A_RELATIONSHIP,
             BREAK_UP,
-            TATTLE,
+            TATTLE_TO,
             BUY_COFFEE,
             DRINK_COFFEE
         }
@@ -46,7 +46,7 @@ namespace RealitySim
             BEST_FRIEND,
             BEST_FRIEND_EXCLUDING_SO,
             WORST_ENEMY,
-            WORST_ENEMY_WITH_DIRT,
+            BEST_FRIEND_WITH_DIRT,
             NONE
         }
     }
