@@ -287,8 +287,15 @@ namespace RealitySim
                                 .First();
                         }
 
-                        Console.WriteLine($"{housemate.Name} announces that {targetSO.Name} is cheating on {targetName} " +
-                                $"with {homewrecker.Name}.");
+                        if (targetSO == housemate)
+                        {
+                            Console.WriteLine($"{housemate.Name} announces that he has been cheating on {targetName} with {homewrecker.Name}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{housemate.Name} announces that {targetSO.Name} is cheating on {targetName} " +
+                                    $"with {homewrecker.Name}.");
+                        }
                         ChallengeRelationship(target, perp);
 
                         IncrementKarma(housemate, target, accusationIsTrue, 2);

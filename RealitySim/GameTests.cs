@@ -21,7 +21,8 @@ namespace RealitySim
             Action FLIRT = Actions.Where(a => a.Id == ACTION.FLIRT).First();
             */
 
-            SHOT_Tests();
+            //SHOT_Tests();
+            TATTLE_ON_Tests();
 
             Console.WriteLine(stars);
             Console.WriteLine("PRESS ENTER TO EXIST");
@@ -99,6 +100,13 @@ namespace RealitySim
             Relationships.Clear();
             Relationships.Add((h2, h3));
             h1.WitnessedInfidelities.Add(new WitnessedInfidelity(h3, h2, h4));
+            PerformAction(TATTLE_TO, h1, h2, House);
+
+            Console.WriteLine(stars);
+            Console.WriteLine("Test: Tattle on self");
+            Console.WriteLine(stars);
+            Relationships.Clear();
+            Relationships.Add((h1, h2));
             PerformAction(TATTLE_TO, h1, h2, House);
         }
     }

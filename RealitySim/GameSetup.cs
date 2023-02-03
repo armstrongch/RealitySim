@@ -19,9 +19,9 @@ namespace RealitySim
                 ("Matt", "My name is Matt!"),
                 ("Sam", "My name is Sam!"),
                 ("Thad", "My name is Thad!"),
-                ("Turd", "My name is Turd!"),
+                /*("Turd", "My name is Turd!"),
                 ("Eggbert", "My name is Eggbert!"),
-                ("Fuckston", "My name is Fuckston!")
+                ("Fuckston", "My name is Fuckston!")*/
             };
 
             names = names.OrderBy(n => rand.Next()).ToList();
