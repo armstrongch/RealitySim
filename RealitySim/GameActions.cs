@@ -27,10 +27,17 @@ namespace RealitySim
                     string drinks = numDrinksToday == 1 ? "drink" : "drinks";
                     Console.WriteLine($"{housemate.Name} has already had {numDrinksToday.ToString()} {drinks} today, and his decision-making is impaired.");
                     Action FLIRT = Actions.Where(a => a.Id == ACTION.FLIRT).First();
-                    if ((witnesses.Count > 0) && (FLIRT.EnergyCost <= housemate.Energy))
+                    Action ENTER_A_RELATIONSHIP = Actions.Where(a => a.Id == ACTION.ENTER_A_RELATIONSHIP).First();
+                    if ((witnesses.Count > 0))
                     {
-                        action = FLIRT;
-                        target = witnesses.Where(w => w != housemate).OrderBy(w => housemate.GetOpinionOf(w)).First();
+                        Action newAction = FLIRT;
+                        if (action == FLIRT) { newAction = ENTER_A_RELATIONSHIP; }
+
+                        if (housemate.Energy >= action.EnergyCost)
+                        {
+                            action = newAction;
+                            target = witnesses.Where(w => w != housemate).OrderBy(w => housemate.GetOpinionOf(w)).First();
+                        }
                     }
                 }
             }
@@ -54,6 +61,23 @@ namespace RealitySim
                     else
                     {
                         Console.WriteLine($"{housemate.Name} doesn't have $10 to order a shot.");
+                    }
+                    break;
+                case ACTION.BUY_A_ROUND_OF_SHOTS:
+                    int cost = witnesses.Count * 10;
+                    if (housemate.Cash >= cost)
+                    {
+                        Console.WriteLine($"{housemate.Name} buys a round of shots. This improves his reputation with everyone at the club.");
+                        housemate.Cash -= cost;
+                        foreach (Housemate witness in witnesses)
+                        {
+                            witness.IncrementOpinion(housemate, 2);
+                            DoOtherAction(witness, ACTION.TAKE_A_SHOT, null);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{housemate.Name} doesn't have enough money to order a shot for everyone at the club.");
                     }
                     break;
                 case ACTION.TAKE_A_SHOT:

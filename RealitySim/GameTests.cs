@@ -21,8 +21,8 @@ namespace RealitySim
             Action FLIRT = Actions.Where(a => a.Id == ACTION.FLIRT).First();
             */
 
-            //SHOT_Tests();
-            TATTLE_ON_Tests();
+            SHOT_Tests();
+            //TATTLE_ON_Tests();
 
             Console.WriteLine(stars);
             Console.WriteLine("PRESS ENTER TO EXIST");
@@ -32,12 +32,18 @@ namespace RealitySim
         public void SHOT_Tests()
         {
             Housemate h1 = Housemates[0];
+            Housemate h2 = Housemates[1];
+            Housemate h3 = Housemates[2];
+            Housemate h4 = Housemates[3];
+            Housemate h5 = Housemates[4];
             LOCATION CLUB = LOCATION.CLUB;
             LOCATION HOUSE = LOCATION.HOUSE;
             Action BUY_A_SHOT = Actions.Where(a => a.Id == ACTION.BUY_A_SHOT).First();
             Action GO_HOME = Actions.Where(a => a.Id == ACTION.GO_HOME).First();
             Action GO_TO_BED = Actions.Where(a => a.Id == ACTION.GO_TO_BED).First();
-            
+            Action BUY_A_ROUND_OF_SHOTS = Actions.Where(a => a.Id == ACTION.BUY_A_ROUND_OF_SHOTS).First();
+            Action FLIRT = Actions.Where(a => a.Id == ACTION.FLIRT).First();
+
 
             Console.WriteLine(stars);
             Console.WriteLine("Test: Can't afford a shot.");
@@ -53,7 +59,19 @@ namespace RealitySim
             PerformAction(BUY_A_SHOT, h1, null, CLUB);
 
             Console.WriteLine(stars);
+            Console.WriteLine("Test: Buy a round of shots.");
+            Console.WriteLine(stars);
+            h1.Cash = 200;
+            h2.currentLocation = CLUB;
+            h3.currentLocation = CLUB;
+            h4.currentLocation = CLUB;
+            PerformAction(BUY_A_ROUND_OF_SHOTS, h1, null, CLUB);
+
+            Console.WriteLine(stars);
             Console.WriteLine("Test: Get wasted.");
+            h2.currentLocation = HOUSE;
+            h3.currentLocation = HOUSE;
+            h4.currentLocation = HOUSE;
             for (int i = 0; i < 10; i += 1)
             {
                 Console.WriteLine(stars);
@@ -62,7 +80,7 @@ namespace RealitySim
             Console.WriteLine(stars);
             PerformAction(GO_HOME, h1, null, CLUB);
             Console.WriteLine(stars);
-            PerformAction(GO_TO_BED, h1, null, HOUSE);
+            PerformAction(FLIRT, h1, h2, HOUSE);
 
         }
 

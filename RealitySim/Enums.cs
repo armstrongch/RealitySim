@@ -28,7 +28,8 @@ namespace RealitySim
             BUY_COFFEE,
             DRINK_COFFEE,
             BUY_A_SHOT,
-            TAKE_A_SHOT
+            TAKE_A_SHOT,
+            BUY_A_ROUND_OF_SHOTS,
         }
 
         public enum RELATIONSHIP

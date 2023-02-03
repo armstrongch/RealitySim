@@ -65,6 +65,7 @@ namespace RealitySim
                 new Action(ACTION.DRINK_COFFEE, none, none, nowhere),
 
                 new Action(ACTION.BUY_A_SHOT, "Buy a Shot of Alcohol", "Pay $10 for a big sip of hard liquor.", club),
+                new Action(ACTION.BUY_A_ROUND_OF_SHOTS, "Buy a Round of Shots", "Buy a shot for everyone at the club.", club),
                 new Action(ACTION.TAKE_A_SHOT, none, none, nowhere),
 
                 new Action(ACTION.PUNCH, "Punch", "Start a fistfight with a housemate.", all, true, 8, CPU_TARGET_TYPE.WORST_ENEMY),
