@@ -12,21 +12,71 @@ namespace RealitySim
     {
         private void RunTests()
         {
-            /*
-            Action ENTER_A_RELATIONSHIP = Actions.Where(a => a.Id == ACTION.ENTER_A_RELATIONSHIP).First();
-            Action BREAK_UP = Actions.Where(a => a.Id == ACTION.BREAK_UP).First();
-            Action BUY_COFFEE = Actions.Where(a => a.Id == ACTION.BUY_COFFEE).First();
-            Action GO_TO_WORK = Actions.Where(a => a.Id == ACTION.GO_TO_WORK).First();
-            Action WORK_A_SHIFT = Actions.Where(a => a.Id == ACTION.WORK_A_SHIFT).First();
-            Action FLIRT = Actions.Where(a => a.Id == ACTION.FLIRT).First();
-            */
-
-            SHOT_Tests();
+            //SHOT_Tests();
             //TATTLE_ON_Tests();
+            DrunkenFlirtingTargetSelection_Tests();
+
 
             Console.WriteLine(stars);
-            Console.WriteLine("PRESS ENTER TO EXIST");
+            Console.WriteLine("PRESS ENTER TO EXIT");
             Console.ReadLine();
+        }
+        public void DrunkenFlirtingTargetSelection_Tests()
+        {
+            Housemate h1 = Housemates[0];
+            LOCATION HOUSE = LOCATION.HOUSE;
+            Action BUY_A_SHOT = Actions.Where(a => a.Id == ACTION.BUY_A_SHOT).First();
+            Action GO_TO_THE_CLUB = Actions.Where(a => a.Id == ACTION.GO_TO_THE_CLUB).First();
+            Action GO_TO_BED = Actions.Where(a => a.Id == ACTION.GO_TO_BED).First();
+
+            Console.WriteLine(stars);
+            Console.WriteLine("Test: Flirting when everyone is asleep");
+            Console.WriteLine(stars);
+
+            foreach(Housemate h in Housemates)
+            {
+                if (h != h1)
+                {
+                    PerformAction(GO_TO_BED, h, null, HOUSE);
+                    Console.WriteLine(stars);
+                }
+            }
+
+            h1.Cash = 999;
+            for (int i = 0; i < 15; i += 1)
+            {
+                PerformAction(BUY_A_SHOT, h1, null, HOUSE);
+                Console.WriteLine(stars);
+            }
+
+            //COPIED FROM MAIN LOOP, I want to see what available actions there are in this scenario.
+            List<Housemate> nearbyHousemates = Housemates
+                            .Where(h => h.currentLocation == h1.currentLocation)
+                            .Where(h => h != h1)
+                            .ToList();
+
+            bool alone = nearbyHousemates.Count == 0;
+
+            List<Action> availableActions = Actions
+                            //Valid Location
+                            .Where(a => a.ValidLocations.Contains(h1.currentLocation))
+                            //Other housemates in location, or action does not require target
+                            .Where(a => !a.RequiresTarget || !alone)
+                            //Housemate has enough energy
+                            .Where(a => a.EnergyCost <= h1.Energy)
+                            .ToList();
+
+            foreach (Action action in availableActions)
+            {
+                if (action.Id != ACTION.GO_TO_BED)
+                {
+                    PerformAction(action, h1, null, HOUSE);
+                    Console.WriteLine(stars);
+                }
+            }
+
+            PerformAction(GO_TO_BED, h1, null, HOUSE);
+            Console.WriteLine(stars);
         }
 
         public void SHOT_Tests()

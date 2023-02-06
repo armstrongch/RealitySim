@@ -36,7 +36,7 @@ namespace RealitySim
                         if (housemate.Energy >= action.EnergyCost)
                         {
                             action = newAction;
-                            target = witnesses.Where(w => w != housemate).OrderBy(w => housemate.GetOpinionOf(w)).First();
+                            target = witnesses.OrderBy(w => housemate.GetOpinionOf(w)).First();
                         }
                     }
                 }
@@ -268,7 +268,7 @@ namespace RealitySim
                         {
                             //Make up a rumor to disparrage your target's best friend
                             Housemate targetsFavoriteHousemate = Housemates
-                                .Where(h => h != housemate)
+                                .Where(h => (h != housemate) && (h != target))
                                 .OrderBy(h => target.GetOpinionOf(h))
                                 .First();
                             Console.WriteLine($"{housemate.Name} informs {targetName} that {targetsFavoriteHousemate.Name} has been acting shady. " +
