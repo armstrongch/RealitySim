@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -18,7 +19,7 @@ namespace RealitySim
         List<(Housemate, Housemate)> Relationships = new List<(Housemate, Housemate)>();
         const string stars = "*******************************************************";
 
-        public Game(int numPlayers, bool testMode)
+        public Game(int numPlayers, bool testMode, bool requireInputAfterAction)
         {
             InitializeHousemates(numPlayers);
             InitializeActions();
@@ -52,7 +53,7 @@ namespace RealitySim
                             //Housemate has enough energy
                             .Where(a => a.EnergyCost <= housemate.Energy)
                             .ToList();
-
+                        
                         Action selectedAction = housemate.SelectAction(availableActions);
                         Housemate? selectedTarget = null;
                         if (selectedAction.RequiresTarget)
@@ -65,9 +66,9 @@ namespace RealitySim
                         }
                         
                         PerformAction(selectedAction, housemate, selectedTarget, housemate.currentLocation);
-                        
+
                         Console.WriteLine(stars);
-                        string any_string = GetInput("Press ENTER to continue");
+                        if (requireInputAfterAction) { string any_string = GetInput("Press ENTER to continue"); }
                     }
 
                     //Day is over once everyone is asleep

@@ -33,7 +33,7 @@ namespace RealitySim
                         Action newAction = FLIRT;
                         if (action == FLIRT) { newAction = ENTER_A_RELATIONSHIP; }
 
-                        if (housemate.Energy >= action.EnergyCost)
+                        if (housemate.Energy >= newAction.EnergyCost)
                         {
                             action = newAction;
                             target = witnesses.OrderBy(w => housemate.GetOpinionOf(w)).First();
