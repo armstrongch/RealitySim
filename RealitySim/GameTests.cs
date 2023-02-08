@@ -14,14 +14,15 @@ namespace RealitySim
         {
             //SHOT_Tests();
             //TATTLE_ON_Tests();
-            DrunkenFlirtingTargetSelection_Tests();
+            //DrunkenFlirtingTargetSelection_Tests();
+            WORK_A_SHIFT_Tests();
 
 
             Console.WriteLine(stars);
             Console.WriteLine("PRESS ENTER TO EXIT");
             Console.ReadLine();
         }
-        public void DrunkenFlirtingTargetSelection_Tests()
+        private void DrunkenFlirtingTargetSelection_Tests()
         {
             Housemate h1 = Housemates[0];
             LOCATION HOUSE = LOCATION.HOUSE;
@@ -79,7 +80,7 @@ namespace RealitySim
             Console.WriteLine(stars);
         }
 
-        public void SHOT_Tests()
+        private void SHOT_Tests()
         {
             Housemate h1 = Housemates[0];
             Housemate h2 = Housemates[1];
@@ -132,6 +133,20 @@ namespace RealitySim
             Console.WriteLine(stars);
             PerformAction(FLIRT, h1, h2, HOUSE);
 
+        }
+
+        private void WORK_A_SHIFT_Tests()
+        {
+            Housemate h1 = Housemates[0];
+            LOCATION WORK = LOCATION.WORK;
+            Action WORK_A_SHIFT = Actions.Where(a => a.Id == ACTION.WORK_A_SHIFT).First();
+            Console.WriteLine(stars);
+            Console.WriteLine("Test: Work a bunch of shifts in a row");
+            for (int i = 0; i < 5; i += 1)
+            {
+                Console.WriteLine(stars);
+                PerformAction(WORK_A_SHIFT, h1, null, WORK);
+            }
         }
 
         private void TATTLE_ON_Tests()

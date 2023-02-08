@@ -5,7 +5,7 @@ class Program
 {   
     static void Main(string[] args)
     {
-        bool testMode = false;
+        bool testMode = true;
         bool stressTestMode = false;
         
 

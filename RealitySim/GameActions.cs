@@ -326,7 +326,7 @@ namespace RealitySim
                     }
                     break;
                 default:
-                    throw new NotImplementedException();
+                    throw new Exception();
                     break;
             }
         }

@@ -24,9 +24,8 @@ namespace RealitySim
             InitializeHousemates(numPlayers);
             InitializeActions();
 
-            if (!testMode)
+            if (testMode) { RunTests(); } else
             {
-
                 bool everyoneIsAsleep = false;
                 while (!everyoneIsAsleep)
                 {
@@ -74,15 +73,11 @@ namespace RealitySim
                     //Day is over once everyone is asleep
                     everyoneIsAsleep = !Housemates.Where(h => h.Awake).Any();
                 }
+
+                EndOfDayWrapup();
                 currentDayNum += 1;
                 throw new NotImplementedException("Everyone is asleep.");
             }
-            else
-            {
-                RunTests();
-            }
         }
-
-
     }
 }
